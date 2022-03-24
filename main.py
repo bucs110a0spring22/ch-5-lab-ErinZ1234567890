@@ -27,13 +27,88 @@ Functions you must implement:
 import turtle
 import random
 import time
+import math
 
 #########################################################
 #                   Your Code Goes Below                #
 #########################################################
 
+#draws a square
+def drawSquare(myturtle=None, width=0, top_left_x=0, top_left_y=0):
+  myturtle.up()
+  myturtle.goto(top_left_x, top_left_y)
+  myturtle.down()
+  myturtle.goto(top_left_x, top_left_y - width)
+  myturtle.goto(top_left_x + width, top_left_y - width)
+  myturtle.goto(top_left_x + width, top_left_y)
+  myturtle.goto(top_left_x, top_left_y)
+  myturtle.up()
+#draws 1 line
+def drawLine(myturtle=None, x_start=0, y_start=0, x_end=0, y_end=0):
+  myturtle.up()
+  myturtle.goto(x_start, y_start)
+  myturtle.down()
+  myturtle.goto(x_end, y_end)
+  myturtle.up()
+#draws a circle
+def drawCircle(myturtle=None, radius=0):
+  myturtle.down()
+  myturtle.circle(radius)
+  myturtle.up()
+#sets up dartboard
+def setUpDartboard(myscreen=None, myturtle=None):
+  myscreen.setworldcoordinates(-2,-2,2,2)
+  drawSquare(myturtle, 2, -1, 1)
+  drawLine(myturtle,-1, 0, 1, 0)
+  drawLine(myturtle, 0, 1, 0, -1)
+  drawCircle(myturtle, 1)
 
+#determines whether dart is in the circle. If in circle, makes a green dot. When not in circle, makes a red dot.
+def isInCircle(myturtle=None, circle_center_x=0, circle_center_y=0, radius=0):
+  if (myturtle.distance(0,0) < radius):
+    myturtle.dot(.3, "green")
+    return True
+  else:
+    myturtle.dot(.3, "red")
+    return False
 
+#throws 1 dart at random location. makes a dot there. If in circle, makes a green dot. When not in circle, makes a red dot.
+def throwDart(myturtle=None):
+  myturtle.up()
+  myturtle.goto(random.uniform(-1, 1), random.uniform(-1, 1))
+  if(isInCircle(myturtle, 0, 0, 1)):
+    myturtle.dot(.3, "green")
+  else:
+    myturtle.dot(.3, "red")
+
+def playDarts(myturtle=None):
+  pointsScoredA = 0
+  pointsScoredB = 0
+  for i in range(10):
+    #player A throws a dart
+    throwDart(myturtle)
+    if(isInCircle(myturtle, 0, 0, 1)):
+      pointsScoredA += 1
+    #player B throws a dart
+    throwDart(myturtle)
+    if(isInCircle(myturtle, 0, 0, 1)):
+      pointsScoredB += 1
+  #calculates which player won or if tie
+  if (pointsScoredA > pointsScoredB):
+    print("Player A has won")
+  elif (pointsScoredA < pointsScoredB):
+    print("Player B has won!")
+  else:
+    print("It's a tie!")
+
+def montePi(myturtle=None, num_darts=0):
+  insideCount = 0
+  for i in range(num_darts):
+    throwDart(myturtle)
+    if(isInCircle(myturtle, 0, 0, 1)):
+      insideCount += 1
+  return (insideCount/num_darts) * 4
+  
 #########################################################
 #         Do not alter any code below here              #
 #       Your code must work with the main proivided     #
@@ -59,12 +134,15 @@ def main():
         if isInCircle(myturtle=darty, radius=1):
           print("You hit the dartboard!")
     print("\tPart A Complete...")
+  
     print("=========== Part B ===========")
     darty.clear()
     setUpDartboard(myscreen=window, myturtle=darty)
     playDarts(myturtle=darty)
     print("\tPart B Complete...")
     # Keep the window up until dismissed
+
+    
     print("=========== Part C ===========")
     darty.clear()
     setUpDartboard(myscreen=window, myturtle=darty)
@@ -81,5 +159,5 @@ def main():
     print("\tPart C Complete...")
     # Don't hide or mess with window while it's 'working'
     window.exitonclick()
-
+    
 main()
